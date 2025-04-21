@@ -1,0 +1,195 @@
+<!-- extends表明此页面继承自 base.html 文件 -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    文章详情
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+<script src="{% static 'ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'prism/prism.css' %}">
+
+<!-- 文章详情 -->
+<div class="container">
+    <div class="row">
+        <table>
+            <tr>
+                <th>提交时间</th>
+                <th>用户</th>
+                <th>状态</th>
+                <th>语言</th>
+            </tr>
+            <tr>
+                <th>{{ submission.created }}</th>
+                <th>{{ submission.author }}</th>
+                {% if submission.status == 'Accept' %}
+                <th style="color:green">{{ submission.status }}</th>
+                {% else %}
+                <th style="color:red">{{ submission.status }}</th>
+                {% endif %}
+                <th>{{ submission.language }}</th>
+            </tr>
+        </table>
+        <div class="code-box">
+          <pre><code id="code-content">
+            {{ submission.code }}
+          </code></pre>
+        </div>
+    </div>
+    <div style="float:right">
+        <button style="float: right;" class="copy-button" onclick="copyCode()">复制代码</button>
+    </div>
+    <a class="copy-button" href="{% url "oj:problem_detail" submission.problem.id %}">返回题目</a>
+</div>
+
+<!-- 粘性侧边栏样式 -->
+<style>
+    .sidebar{
+        will-change: min-height;
+    }
+
+    .sidebar__inner{
+        transform: translate(0, 0);
+        transform: translate3d(0, 0, 0);
+        will-change: position, transform;
+    }
+    <style>
+    #notice_link a:link {
+        color: black;
+    }
+
+    #notice_link a:visited {
+        color: lightgrey;
+    }
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden; /* 防止内容溢出到水平滚动条 */
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%; /* 表格宽度与容器宽度相同 */
+        table-layout: fixed; /* 表格布局固定，可以确保列宽不变 */
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+        border: 1px solid #ddd; /* 可选，为表格添加边框 */
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    /* 响应式布局（可选） */
+    @media screen and (max-width: 600px) {
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        tr {
+            margin: 0 0 1rem 0;
+        }
+
+        td {
+            border: none;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 50%;
+        }
+
+        td:before {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+        }
+        td:nth-of-type(1):before { content: "查看代码"; }
+        td:nth-of-type(2):before { content: "提交时间"; }
+        td:nth-of-type(3):before { content: "用户"; }
+        td:nth-of-type(4):before { content: "状态"; }
+        td:nth-of-type(5):before { content: "语言"; }
+    }
+   /* 代码框样式 */
+  .code-box {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    width: 100%;
+    box-sizing: border-box;
+    tab-size: 4;
+    margin-bottom: 10px; /* 添加一些空间以放置按钮 */
+  }
+
+  /* 复制按钮样式 */
+  .copy-button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+  }
+
+  .copy-button:hover {
+    background-color: #45a049;
+  }
+</style>
+<script>
+  function copyCode() {
+    /* 获取代码框内容 */
+    var codeContent = document.getElementById('code-content').textContent || document.getElementById('code-content').innerText;
+
+    /* 创建一个新的textarea元素并设置其内容为要复制的代码 */
+    var tempTextarea = document.createElement("textarea");
+    tempTextarea.value = codeContent;
+
+    /* 将textarea设置为不可见，并将其添加到DOM中 */
+    tempTextarea.style.position = "fixed";
+    tempTextarea.style.top = 0;
+    tempTextarea.style.left = 0;
+    tempTextarea.style.opacity = 0;
+    document.body.appendChild(tempTextarea);
+
+    /* 选中textarea的内容 */
+    tempTextarea.focus();
+    tempTextarea.select();
+
+    /* 复制内容到剪贴板 */
+    try {
+      var successful = document.execCommand('copy');
+      var msg = successful ? '成功复制！' : '复制失败！';
+      console.log(msg);
+    } catch (err) {
+      console.error('复制失败: ', err);
+    }
+
+    /* 清理：移除textarea并给出反馈（可选） */
+    document.body.removeChild(tempTextarea);
+  }
+</script>
+{% endblock content %}

@@ -1,0 +1,239 @@
+{% extends "base.html" %} {% load staticfiles %}
+{% block title %} 首页 {% endblock title %}
+{% block content %}
+<link href="{% static 'css/home.css' %}" rel="stylesheet">
+{#    <script src="{% static 'js/jqthumb.min.js' %}"></script>#}
+{# <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">#}
+{#<link href="{% static 'css/style.css' %}" rel="stylesheet">#}
+{#<script src="{% static 'js/jquery.min.js' %}"></script>#}
+{#<script src="{% static 'js/bootstrap.min.js' %}"></script>#}
+<div class="carousel">
+    <img src="{% static 'img/pz1.jpg' %}" alt="Image 1" class="active">
+    <img src="{% static 'img/pz2.jpg' %}" alt="Image 2">
+    <img  src="{% static 'img/pz3.png' %}" alt="Image 3">
+    <div class="carousel-buttons">
+        <button class="carousel-prev">&lt;</button>
+        <button class="carousel-next">&gt;</button>
+    </div>
+</div>
+<div class="container">
+  <div class="row row-3">
+    <div class="col-md-4">
+      <!-- 企业概况 -->
+      <span class="part1">
+        <a href="">网站概况</a>
+      </span>
+      <span class="part1 en">
+        &nbsp;&nbsp;/ About Us
+      </span>
+      <div class="line1">
+        <div class="line2 theme"></div>
+      </div>
+      <div style="margin-top:20px;">
+        <img class="img-responsive" src="{% static 'img/pz1.jpg' %}">
+        <p class="text1">
+          CodeZeroTwo 致力于成为一个02动漫主题风格的免费开放且持续更新的 编程竞赛知识整合站点，
+            大家可以在这里获取与竞赛相关的、有趣又实用的知识。我们为大家准备了竞赛中的基础知识、常见题型、解题思路
+            以及常用工具等内容，帮助大家更快速深入地学习编程竞赛中涉及到的知识。
+        </p>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <!-- 新闻动态 -->
+      <span class="part1">
+        <a href="{% url 'article:article_list' %}">知识点动态</a>
+      </span>
+      <span class="part1 en">
+        &nbsp;&nbsp;/ Algorithm
+      </span>
+      <a class="btn btn-default btn-xs more-btn" href="{% url 'article:article_list' %}">
+        +&nbsp;更多
+      </a>
+      <div class="line1">
+        <div class="line2 theme"></div>
+      </div>
+      <div class="col-md-13">
+        <ul class="list-unstyled list-new">
+          {% for article in articles %}
+          <li>
+            <a href="{% url 'article:article_detail' article.id %}">
+              {{article.title|truncatechars:"15"}}</a>
+              <span></span>
+            <span>【{{article.created|date:"Y-m-d"}}】</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+  </div>
+  <div class="col-md-4">
+      <!-- 通知公告 -->
+      <span class="part1">
+        <a href="{% url 'oj:problem_list' %}">题库</a>
+      </span>
+      <span class="part1 en">
+        &nbsp;&nbsp;/ Question bank
+      </span>
+      <a class="btn btn-default btn-xs more-btn" href="{% url 'oj:problem_list' %}">
+        +&nbsp;更多
+      </a>
+      <div class="line1">
+        <div class="line2 theme"></div>
+      </div>
+      <div>
+        <img class="img-responsive" src="{% static 'img/pz9.png' %}">
+        <ul class="list-unstyled list-new">
+          {% for problem in problems %}
+          <li>
+            <a href="{% url 'oj:problem_detail' problem.id %}">{{ problem.title }}</a>
+            <a href="{% url 'oj:problem_detail' problem.id %}" class="public-detail">
+              查看详情>>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  <div class="col-md-4">
+      <!-- 科研基地 -->
+      <span class="part1">
+        <a>比赛相关</a>
+      </span>
+      <span class="part1 en">
+        &nbsp;&nbsp;/ Competition related
+      </span>
+      <div class="line1">
+        <div class="line2 theme"></div>
+      </div>
+      <div>
+        <a>
+          <img class="img-responsive" src="{% static 'img/pz11.png' %}">
+        </a>
+        <p class="text1">
+          <font color="#d30a1c">ICPC赛事</font>
+          ICPC（英文：International Collegiate Programming Contest，中文：国际大学生程序设计竞赛）由 ICPC 基金会
+            （英文：ICPC Foundation）举办，是最具影响力的大学生计算机竞赛。由于以前 ACM 赞助这个竞赛，也有很多人习惯叫它 ACM 竞赛。
+        </p>
+        <p class="text1">
+             ICPC 主要分为区域赛（Regionals）和总决赛（World Finals）两部分。
+        </p>
+        <p class="text1">
+            <a href="https://icpc.global">官网地址：https://icpc.global</a>
+        </p>
+      </div>
+  </div>
+  <div class="col-md-4">
+      <!-- 联系我们 -->
+      <span class="part1">
+          关于网站
+{#        <a href="{% url 'contactApp:contact' %}">联系我们</a>#}
+      </span>
+      <span class="part1 en">
+        &nbsp;&nbsp;/ Website
+      </span>
+      <div class="line1">
+        <div class="line2 theme"></div>
+      </div>
+      <div>
+        <ul class="list-unstyled procurement-li">
+          <li>业务质询一：111-XXXXXX</li>
+          <li>业务质询二：222-XXXXXX</li>
+          <li>咨询电话：0111-XXXXXX</li>
+          <li>企业传真：0222-XXXXXX</li>
+          <li>地址：某某某新区某某大道1号</li>
+          <li>邮编：XXXXXX</li>
+          <li>
+            网址：<a href="http://39.101.64.228:8080/">http://39.101.64.228:8080/</a>
+          </li>
+        </ul>
+{#       <div class="platform"><a href="{% url 'contactApp:Dev' %}">详情</a></div>#}
+      </div>
+    </div>
+</div>
+<style>
+  .carousel {
+        position: relative;
+        width: 100%;
+        height: 775px;
+        overflow: hidden;
+    }
+
+    .carousel img {
+        position: absolute;
+        width: 100%;
+        height: auto;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .carousel img.active {
+        opacity: 1;
+    }
+
+    .carousel-buttons {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+    }
+
+    .carousel-buttons button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 2em;
+        cursor: pointer;
+    }
+    .img-responsive{
+        display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    .list-unstyled {
+      padding-left: 0;
+      list-style: none;
+        width:100%
+    }
+</style>
+
+<script>
+let currentIndex = 0;
+const images = document.querySelectorAll('.carousel img');
+const imageCount = images.length;
+
+function updateCarousel() {
+    images.forEach((img, index) => {
+        img.classList.remove('active');
+        if (index === currentIndex) {
+            img.classList.add('active');
+        }
+    });
+}
+
+// 自动轮播
+function startAutoplay() {
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % imageCount;
+        updateCarousel();
+    }, 6000); // 4秒自动轮播
+}
+
+// 手动切换图片
+document.querySelector('.carousel-next').addEventListener('click', function() {
+    currentIndex = (currentIndex + 1) % imageCount;
+    updateCarousel();
+});
+
+document.querySelector('.carousel-prev').addEventListener('click', function() {
+    currentIndex = (currentIndex - 1 + imageCount) % imageCount;
+    updateCarousel();
+});
+
+// 初始显示第一张图片
+updateCarousel();
+// 开始自动轮播
+startAutoplay();
+</script>
+{% endblock content %}

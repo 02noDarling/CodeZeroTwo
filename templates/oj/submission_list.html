@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    通知
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-4 ml-4">
+
+    </div>
+    <!-- 未读通知列表 -->
+    <table>
+        <tr>
+            <th>查看代码</th>
+            <th>提交时间</th>
+            <th>用户</th>
+            <th>状态</th>
+            <th>语言</th>
+        </tr>
+        {% for submission in submissions %}
+            <tr>
+                <th>
+                    <a href="{% url "oj:submission_detail" submission.id %}">code is here</a>
+                </th>
+                <th>{{ submission.created }}</th>
+                <th>{{ submission.author }}</th>
+                {% if submission.status == 'Accept' %}
+                <th style="color:green">{{ submission.status }}</th>
+                {% else %}
+                <th style="color:red">{{ submission.status }}</th>
+                {% endif %}
+                <th>{{ submission.language }}</th>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<style>
+    #notice_link a:link {
+        color: black;
+    }
+
+    #notice_link a:visited {
+        color: lightgrey;
+    }
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden; /* 防止内容溢出到水平滚动条 */
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%; /* 表格宽度与容器宽度相同 */
+        table-layout: fixed; /* 表格布局固定，可以确保列宽不变 */
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+        border: 1px solid #ddd; /* 可选，为表格添加边框 */
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    /* 响应式布局（可选） */
+    @media screen and (max-width: 600px) {
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        tr {
+            margin: 0 0 1rem 0;
+        }
+
+        td {
+            border: none;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 50%;
+        }
+
+        td:before {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+        }
+        td:nth-of-type(1):before { content: "查看代码"; }
+        td:nth-of-type(2):before { content: "提交时间"; }
+        td:nth-of-type(3):before { content: "用户"; }
+        td:nth-of-type(4):before { content: "状态"; }
+        td:nth-of-type(5):before { content: "语言"; }
+    }
+</style>
+{% endblock content %}

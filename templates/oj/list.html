@@ -1,0 +1,163 @@
+<!-- extends表明此页面继承自 base.html 文件 -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    首页
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+
+<!-- 定义放置文章标题的div容器 -->
+<div class="container">
+    <h1 class="text-center">CodeZeroTwo在线题库</h1>
+    <!-- 新增，搜索栏 -->
+    <div class="search-container">
+        <form class="form-inline" >
+            <input type="text" class="search-input" placeholder="搜索..." name="search">
+            <button class="search-button">搜索</button>
+        </form>
+    </div>
+    {% if search %}
+        {% if problems %}
+            <h4><span style="color: red">"{{ search }}"</span>的搜索结果如下：</h4>
+            <hr>
+        {% else %}
+            <h4>暂无<span style="color: red">"{{ search }}"</span>有关的文章。</h4>
+            <hr>
+        {% endif %}
+    {% endif %}
+    <hr>
+    <table class="zebra-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>标题</th>
+                <th>内容</th>
+                <th>难度</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for problem in problems %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'oj:problem_detail' problem.id %}">{{ problem.title }}</a>
+                    </td>
+                    <td>{{ problem.body|slice:'10' }}...</td>
+                    <td>
+                        <span class="label label-success round">简单</span>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- 页码导航 -->
+    <br>
+    <div class="pagination row">
+        <div class="m-auto">
+            <span class="step-links">
+                <!-- 如果不是第一页，则显示上翻按钮 -->
+                {% if problems.has_previous %}
+                    <a href="?page=1" class="btn btn-success">
+                        &laquo; 1
+                    </a>
+                    <span>...</span>
+                    <a href="?page={{ problems.previous_page_number }}"
+                       class="btn btn-secondary"
+                    >
+                        {{ problems.previous_page_number }}
+                    </a>
+                {% endif %}
+
+                <!-- 当前页面 -->
+                <span class="current btn btn-danger btn-lg">
+                    {{ problems.number }}
+                </span>
+
+                <!-- 如果不是最末页，则显示下翻按钮 -->
+                {% if problems.has_next %}
+                    <a href="?page={{ problems.next_page_number }}"
+                       class="btn btn-secondary"
+                    >
+                        {{ problems.next_page_number }}
+                    </a>
+                    <span>...</span>
+                    <a href="?page={{ problems.paginator.num_pages }}"
+                       class="btn btn-success"
+                    >
+                        {{ problems.paginator.num_pages }} &raquo;
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+<style>
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-input {
+    width: 500px; /* 适中的宽度 */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px; /* 左侧圆角 */
+    transition: border-color 0.3s;
+}
+
+.search-button {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* 绿色背景 */
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0; /* 右侧圆角 */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover {
+    background-color: #45a049; /* 悬停时颜色变深 */
+}
+.zebra-table {
+    width: 100%; /* 确保表格宽度与容器宽度相同 */
+    border-collapse: collapse; /* 合并相邻边框 */
+}
+
+.zebra-table th, .zebra-table td {
+    padding: 8px; /* 单元格内边距 */
+    text-align: left; /* 文本左对齐 */
+    border-bottom: 1px solid #ddd; /* 底部边框 */
+}
+
+.zebra-table tbody tr:nth-child(even) {
+    background-color: #fff; /* 偶数行背景色 */
+}
+
+.zebra-table tbody tr:nth-child(odd) {
+    background-color: #f2f2f2; /* 奇数行背景色（通常与body背景色相同，可省略） */
+}
+.label-success {
+    background-color: #5cb85c;
+}
+.label {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+.label-danger {
+    background-color: #d9534f;
+}
+</style>
+{% endblock content %}

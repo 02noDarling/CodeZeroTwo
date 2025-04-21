@@ -1,0 +1,108 @@
+
+<!-- extends表明此页面继承自 base.html 文件 -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    首页
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+
+<!-- 定义放置文章标题的div容器 -->
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'article:video_list' %}">
+                    最新
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'article:video_list' %}?order=total_views">
+                    最热
+                </a>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row mt-2">
+
+        {% for video in videos %}
+        <!-- 文章内容 -->
+        <div class="col-4 mb-4">
+        <!-- 卡片容器 -->
+            <div class="card h-100">
+                <!-- 标题图 -->
+                <div class="ui tiny image">
+                    <img src="{{ video.cover.url }}" style="max-width:100%; border-radius: 20px" >
+                </div>
+{#                {% if video.avatar %}#}
+{#                <div class="col-3">#}
+{#                    <img src="{{ video.avatar.url }}"#}
+{#                         alt="avatar"#}
+{#                         style="max-width:100%; border-radius: 20px"#}
+{#                    >#}
+{#                </div>#}
+{#                {% endif %}#}
+                <!-- 标题 -->
+                <h4 class="card-header">{{ video.title }}</h4>
+                <!-- 注脚 -->
+                <div class="card-footer">
+                    <a href="{% url 'video:video_detail' video.id %}" class="btn btn-primary">观看视频</a>
+                    <span>
+                        <small class="col align-self-end" style="color: gray;">
+                            播放次数: {{ video.total_views }}
+                        </small>
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+        <!-- 页码导航 -->
+    <div class="pagination row">
+        <div class="m-auto">
+            <span class="step-links">
+                <!-- 如果不是第一页，则显示上翻按钮 -->
+                {% if videos.has_previous %}
+                    <a href="?page=1&order={{ order }}" class="btn btn-success">
+                        &laquo; 1
+                    </a>
+                    <span>...</span>
+                    <a href="?page={{ videos.previous_page_number }}&order={{ order }}"
+                        class="btn btn-secondary"
+                    >
+                        {{ videos.previous_page_number }}
+                    </a>
+                {% endif %}
+
+                <!-- 当前页面 -->
+                <span class="current btn btn-danger btn-lg">
+                    {{ videos.number }}
+                </span>
+
+                <!-- 如果不是最末页，则显示下翻按钮 -->
+                {% if videos.has_next %}
+                    <a href="?page={{ videos.next_page_number }}&order={{ order }}"
+                       class="btn btn-secondary"
+                    >
+                        {{ videos.next_page_number }}
+                    </a>
+                    <span>...</span>
+                    <a href="?page={{ videos.paginator.num_pages }}&order={{ order }}"
+                       class="btn btn-success"
+                    >
+                        {{ videos.paginator.num_pages }} &raquo;
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

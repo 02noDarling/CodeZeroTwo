@@ -1,0 +1,327 @@
+<!-- extends表明此页面继承自 base.html 文件 -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    首页
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+
+<!-- 定义放置文章标题的div容器 -->
+{% if user.is_authenticated %}
+    <div class="container">
+        <h4 class="card-header">快来和02聊天吧！</h4>
+        <div class="Mycontainer">
+            <div class="content">
+                <div class="item item-left">
+                    <div class="avatar">
+                        <img src="/media/article/20240403/zerotwo.png">
+                    </div>
+                    <div class="bubble bubble-left">你好呀，请问02有啥可以帮到您的吗？</div>
+                </div>
+                 {% for chat in chats %}
+                    <div class="item item-center"><span>{{ chat.created}}</span></div>
+                    <div class="item item-right">
+                        <div class="bubble bubble-right">{{ chat.problem }}</div>
+                        {% if profile.avatar %}
+                            <div class="avatar">
+                                <img src={{  profile.avatar.url }}>
+                            </div>
+                        {% else %}
+                             <div class="avatar">
+                                <img src="">
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="item item-left">
+                        <div class="avatar">
+                            <img src="/media/article/20240403/zerotwo.png" />
+                        </div>
+                        {% if chat.id != answer_id %}
+                            <div class="bubble bubble-left" id="chat_elem_{{ chat.id }}">{{ chat.answer }}</div>
+                        {% else %}
+                            <div class="bubble bubble-left" id="chat_elem_{{ chat.id }}"></div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <form
+                    id="myForm"
+                    action="{% url 'chatrobot:chatrobot'%}"
+                    method="POST"
+                >
+                {% csrf_token %}
+                    <div class="input-area">
+                        <textarea name="input" id="input"></textarea>
+                        <div class="button-area" >
+                            <button id="send-btn" type="submit">发 送</button>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+{% else %}
+    <div class="container">
+        <h4 class="card-header">快来和02聊天吧！</h4>
+        <div class="NewMycontainer">
+            <div class="content">
+                <div class="item item-left">
+                    <div class="avatar">
+                        <img src="/media/article/20240403/zerotwo.png">
+                    </div>
+                    <div class="bubble bubble-left">你好呀，请问02有啥可以帮到您的吗？</div>
+                </div>
+                 <div class="item item-left">
+                    <div class="avatar">
+                        <img src="/media/article/20240403/zerotwo.png">
+                    </div>
+                    <div class="bubble bubble-left">请先进行用户登录后再问02问题哦！</div>
+                </div>
+            </div>
+            <br>
+            <h5 class="row justify-content-center">
+                请<a href="{% url 'userprofile:login' %}">登录</a>后回复
+            </h5>
+            <br>
+        </div>
+    </div>
+{% endif %}
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    .content{
+        width: calc(100% - 40px);
+        padding: 20px;
+        overflow-y: scroll;
+        flex: 1;
+    }
+    .content{
+        width: calc(100% - 40px);
+        padding: 20px;
+        overflow-y: scroll;
+        flex: 1;
+    }
+    .Mycontainer{
+        height: 760px;
+        width: 1112px;
+        border-radius: 4px;
+        border: 0.5px solid #e0e0e0;
+        background-color: #f5f5f5;
+        display: flex;
+        flex-flow: column;
+        overflow: hidden;
+    }
+    .NewMycontainer{
+        height: 560px;
+        width: 1112px;
+        border-radius: 4px;
+        border: 0.5px solid #e0e0e0;
+        background-color: #f5f5f5;
+        display: flex;
+        flex-flow: column;
+        overflow: hidden;
+    }
+    .content:hover::-webkit-scrollbar-thumb{
+        background:rgba(0,0,0,0.1);
+    }
+    .bubble{
+        max-width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        position: relative;
+        color: #000;
+        word-wrap:break-word;
+        word-break:normal;
+    }
+    .item-left .bubble{
+        margin-left: 15px;
+        background-color: #fff;
+    }
+    .item-left .bubble:before{
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-top: 10px solid transparent;
+        border-right: 10px solid #fff;
+        border-bottom: 10px solid transparent;
+        left: -20px;
+    }
+    .item-right .bubble{
+        margin-right: 15px;
+        background-color: #9eea6a;
+    }
+    .item-right .bubble:before{
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 10px solid #9eea6a;
+        border-top: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        right: -20px;
+    }
+    .item{
+        margin-top: 15px;
+        display: flex;
+        width: 100%;
+    }
+    .item.item-right{
+        justify-content: flex-end;
+    }
+    .item.item-center{
+        justify-content: center;
+    }
+    .item.item-center span{
+        font-size: 12px;
+        padding: 2px 4px;
+        color: #fff;
+        background-color: #dadada;
+        border-radius: 3px;
+        -moz-user-select:none; /*火狐*/
+        -webkit-user-select:none; /*webkit浏览器*/
+        -ms-user-select:none; /*IE10*/
+        -khtml-user-select:none; /*早期浏览器*/
+        user-select:none;
+    }
+
+    .avatar img{
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+    }
+    .input-area{
+        border-top:0.5px solid #e0e0e0;
+        height: 150px;
+        display: flex;
+        flex-flow: column;
+        background-color: #fff;
+    }
+    textarea{
+        flex: 1;
+        padding: 5px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+        overflow-y: auto;
+        overflow-x: hidden;
+        outline:none;
+        resize:none;
+    }
+    .button-area{
+        display: flex;
+        height: 40px;
+        margin-right: 10px;
+        line-height: 40px;
+        padding: 5px;
+        justify-content: flex-end;
+    }
+    .button-area button{
+        width: 80px;
+        border: none;
+        outline: none;
+        border-radius: 4px;
+        float: right;
+        cursor: pointer;
+    }
+
+    /* 设置滚动条的样式 */
+    ::-webkit-scrollbar {
+        width:10px;
+    }
+    /* 滚动槽 */
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow:inset006pxrgba(0,0,0,0.3);
+        border-radius:8px;
+    }
+    /* 滚动条滑块 */
+    ::-webkit-scrollbar-thumb {
+        border-radius:10px;
+        background:rgba(0,0,0,0);
+        -webkit-box-shadow:inset006pxrgba(0,0,0,0.5);
+    }
+</style>
+<script>
+    function send(){
+        let text = document.querySelector('#textarea').value;
+        if(!text){
+            alert('请输入内容');
+            return ;
+        }
+        let item = document.createElement('div');
+        item.className = 'item item-right';
+        item.innerHTML = `<div class="bubble bubble-left">${text}</div><div class="avatar"><img src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3313909130,2406410525&fm=15&gp=0.jpg" /></div>`;
+        document.querySelector('.content').appendChild(item);
+        document.querySelector('#textarea').value = '';
+        document.querySelector('#textarea').focus();
+        //滚动条置底
+        let height = document.querySelector('.content').scrollHeight;
+        document.querySelector(".content").scrollTop = height;
+    }
+
+    {#function typeWriter(text, delay = 100) {#}
+    {#    let chatbox = document.getElementById('chat_elem_{{ answer_id }}');#}
+    {#    let p = document.createElement('p');#}
+    {#    p.textContent = '';#}
+    {##}
+    {#    let type = () => {#}
+    {#        if (text.length > 0) {#}
+    {#            p.textContent += text.charAt(0);#}
+    {#            text = text.slice(1);#}
+    {#            chatbox.appendChild(p);#}
+    {#            setTimeout(type, delay);#}
+    {#        } else {#}
+    {#            // 添加换行或新的消息气泡等（根据你的设计）#}
+    {#            p = document.createElement('p');#}
+    {#            chatbox.appendChild(p);#}
+    {#        }#}
+    {#    };#}
+    {##}
+    {#    type();#}
+    function typeWriter(answerBody, chatboxId, delay = 100) {
+        // 获取chatbox元素
+        let chatbox = document.getElementById(chatboxId);
+        if (!chatbox) {
+            console.error('Chatbox element not found');
+            return;
+        }
+
+        // 创建一个p元素来存放打印的文本
+        let p = document.createElement('p');
+        chatbox.appendChild(p); // 将p元素添加到chatbox中
+
+        // 定义一个函数来逐步打印文本
+        let type = (remainingText) => {
+            if (remainingText.length === 0) {
+                // 文本已全部打印，可以在这里添加换行或新的消息气泡
+                // 例如，创建一个新的p元素来模拟换行
+                let newline = document.createElement('p');
+                newline.textContent = ''; // 可以是空字符串或任何你想要的分隔符
+                chatbox.appendChild(newline);
+                return; // 文本结束，退出函数
+            }
+
+            // 将第一个字符添加到p元素的文本内容中
+            p.textContent += remainingText.charAt(0);
+
+            // 递归调用type函数，传入剩余的文本，并设置延迟
+            setTimeout(() => type(remainingText.slice(1)), delay);
+        };
+
+        // 开始打印文本
+        type(answerBody);
+    }
+    let chatboxId= 'chat_elem_{{ answer_id }}'; // 替换为实际ID
+    let answerBody = '{{ answer_body }}'; // 替换为实际消息内容
+    typeWriter(answerBody, chatboxId);
+    {#typeWriter('{{ answer_body }}');#}
+</script>
+{% endblock content %}

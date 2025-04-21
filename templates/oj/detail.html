@@ -1,0 +1,126 @@
+<!-- extends表明此页面继承自 base.html 文件 -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    文章详情
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+
+<!-- 文章详情 -->
+<div class="container">
+    <div class="row">
+        <!-- 标题及作者 -->
+        <h1 class="col-12 mt-4 mb-4">{{ problem.title }}</h1>
+        <div class="col-12 alert alert-success">
+            作者：{{ problem.author }}
+            {% if problem.solution != "" %}
+            · <a href="{% url "video:video_detail" problem.solution %}">
+                题解视频
+            </a>
+            · <a href="{% url "oj:submission_list" problem.id %}">
+                提交记录
+            </a>
+            {% endif %}
+        </div>
+        <!-- 文章正文 -->
+        <div class="col-12">
+            <p>{{ problem.body|safe }}</p>
+        </div>
+    </div>
+    <!-- 提交代码 -->
+    <hr>
+    {% if user.is_authenticated %}
+        <div>
+            <form
+                id="myForm"
+                action="{% url 'oj:post_code' problem.id %}"
+                method="POST"
+            >
+            <div class="form-group">
+                <label for="column">语言</label>
+                <select class="form-control"
+                        id="language"
+                        name="language"
+                >
+                        <option value="none">请选择语言..</option>
+                    {% for language in languages %}
+                        <option value= {{  language  }}
+                        {% if type == language.title %}
+                                    selected
+                                {% endif %}
+                        >
+                            {{ language }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% csrf_token %}
+                <div class="form-group">
+                    <label for="body">
+                        <strong>
+                            提交代码：
+                        </strong>
+                    </label>
+                    <textarea type="text" class="form-control" id="body" name="body" rows="12">{{ user_code }}</textarea>
+                </div>
+                <!-- 提交按钮 -->
+                <div style="float:right">
+{#                <strong style="float:left">#}
+{#                    提交状态为：{{ status }}#}
+{#                </strong>#}
+{#                <button style="float: right;" type="submit" class="btn btn-primary" id="send" name="send">发送</button>#}
+                <input type="hidden" id="functionToCall" name="functionToCall" value="">
+{#                <button style="margin-left: 800px" type="submit" class="btn btn-primary" value="提交到函数A" onclick="submitToFunctionA()">调试代码</button>#}
+                <button style="float: right;" type="submit" class="btn btn-primary" value="提交到函数B" onclick="submitToFunctionB()">提交</button>
+                <button style="margin-right: 50px" type="submit" class="btn btn-primary" value="提交到函数A" onclick="submitToFunctionA()">调试代码</button>
+{#                <input type="button" value="提交到函数A" onclick="submitToFunctionA()">#}
+{#                <input type="button" value="提交到函数B" onclick="submitToFunctionB()">#}
+                </div>
+                <strong style="float:left">
+                    提交状态为：
+                </strong>
+                <strong style="float:left;color:{{ color }}">
+                    {{ status }}
+                </strong>
+                </br>
+                <div class="form-group">
+                    <label for="body">
+                        <strong>
+                            输入测试样例：
+                        </strong>
+                    </label>
+                    <textarea type="text" class="form-control" id="input" name="input" rows="5">{{ input }}</textarea>
+                    <label for="body">
+                        <strong>
+                            输出结果：
+                        </strong>
+                    </label>
+                    <textarea type="text" class="form-control" id="output" name="output" rows="5" disabled>{{ output }}</textarea>
+                </div>
+            </form>
+        </div>
+        <br>
+    {% else %}
+        <br>
+        <h5 class="row justify-content-center">
+            请<a href="{% url 'userprofile:login' %}">登录</a>后回复
+        </h5>
+        <br>
+    {% endif %}
+</div>
+<script>
+function submitToFunctionA() {
+    document.getElementById('functionToCall').value = '调试代码';
+    document.getElementById('myForm').submit();
+}
+
+function submitToFunctionB() {
+    document.getElementById('functionToCall').value = '提交代码';
+    document.getElementById('myForm').submit();
+}
+</script>
+{% endblock content %}
